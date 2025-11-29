@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<div style="position: relative; width: 100%; height: 0; padding-top: 562.2255%;
+ padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
+ border-radius: 8px; will-change: transform;">
+  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
+    src="https://www.canva.cn/design/DAG6GImRYY8/thqK0OsRLmLddaGmBraBYg/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
+  </iframe>
+</div>
+<div style="position: relative; width: 100%; height: 0; padding-top: 506.0029%;
+ padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
+ border-radius: 8px; will-change: transform;">
+  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
+    src="https://www.canva.cn/design/DAG6GWIF_EY/Jo7JzSDvw1wfiVbPqXHmig/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
+  </iframe>
+</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>即时答题</title>
+  <style>
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    .question {
+      background: white;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .question h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    .option {
+      display: block;
+      padding: 12px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .option:hover {
+      background: #f0f7ff;
+      border-color: #4a90e2;
+    }
+    .option.selected {
+      background: #e3f2fd;
+      border-color: #2196f3;
+    }
+    .feedback {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .correct-feedback {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+    .incorrect-feedback {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+    .correct-answer {
+      margin-top: 8px;
+      font-size: 0.95em;
+      color: #555;
+    }
+    .correct-answer span {
+      color: #4caf50;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>选择题练习（点击选项立即查看答案）</h1>
+
+<div id="quiz-container"></div>
+
+<script>
+  const questions = [
+    {
+      question: "1. 中国的首都是？",
+      options: ["上海", "广州", "北京", "深圳"],
+      answer: "北京"
+    },
+    {
+      question: "2. HTML 的全称是？",
+      options: [
+        "Hyper Text Markup Language",
+        "High Tech Machine Language",
+        "Home Tool Markup Language",
+        "Hyperlinks and Text Markup Language"
+      ],
+      answer: "Hyper Text Markup Language"
+    },
+    {
+      question: "3. 下列哪个不是编程语言？",
+      options: ["Python", "Java", "MySQL", "JavaScript"],
+      answer: "MySQL"
+    }
+  ];
+
+  function renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+
+    questions.forEach(q => {
+      const questionDiv = document.createElement('div');
+      questionDiv.className = 'question';
+
+      const title = document.createElement('h3');
+      title.textContent = q.question;
+      questionDiv.appendChild(title);
+
+      const optionsContainer = document.createElement('div');
+
+      q.options.forEach(option => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option';
+        optionDiv.textContent = option;
+
+        optionDiv.addEventListener('click', () => {
+          // 1. 清除当前题目的所有选项的 selected 样式
+          optionsContainer.querySelectorAll('.option').forEach(el => {
+            el.classList.remove('selected');
+          });
+
+          // 2. 标记当前选中项
+          optionDiv.classList.add('selected');
+
+          // 3. 移除该题目下已存在的反馈区域（关键修复！）
+          const existingFeedback = questionDiv.querySelector('.feedback');
+          if (existingFeedback) existingFeedback.remove();
+
+          const existingCorrect = questionDiv.querySelector('.correct-answer');
+          if (existingCorrect) existingCorrect.remove();
+
+          // 4. 创建新的反馈
+          const isCorrect = option === q.answer;
+
+          const feedbackDiv = document.createElement('div');
+          feedbackDiv.className = isCorrect ? 'feedback correct-feedback' : 'feedback incorrect-feedback';
+          feedbackDiv.textContent = isCorrect ? '✅ 回答正确！' : '❌ 回答错误';
+          questionDiv.appendChild(feedbackDiv);
+
+          const correctDiv = document.createElement('div');
+          correctDiv.className = 'correct-answer';
+          correctDiv.innerHTML = `正确答案：<span>${q.answer}</span>`;
+          questionDiv.appendChild(correctDiv);
+        });
+
+        optionsContainer.appendChild(optionDiv);
+      });
+
+      questionDiv.appendChild(optionsContainer);
+      container.appendChild(questionDiv);
+    });
+  }
+
+  renderQuiz();
+</script>
+
+</body>
+</html>
+
